@@ -10,7 +10,7 @@ let server:Server;
 
 const startServer=async()=>{
     try{
-        // await mongoose.connect('mongodb+srv://todo:Hzz9WxZw0z9zHHQ4@cluster0.iwcqk.mongodb.net/todosDB?retryWrites=true&w=majority&appName=Cluster0')
+        
         await mongoose.connect(envVars.DB_URL)
         console.log("connected to DB!!")
         server=app.listen(envVars.PORT,()=>{
