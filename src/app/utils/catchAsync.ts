@@ -8,3 +8,9 @@ export const catchAsync = (fn: AsyncHandler) => (req: Request, res: Response, ne
         next(err)
     })
 }
+
+// const catchAsync1=(fn:AsyncHandler)=>(req: Request, res: Response, next: NextFunction)=>{
+//     Promise.resolve(fn(req,res,next)).catch((err)=>{
+//         next(err)
+//     })
+// }
