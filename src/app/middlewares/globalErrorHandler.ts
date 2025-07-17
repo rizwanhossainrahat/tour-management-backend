@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { envVars } from "../config/env"
-import AppError from "../errorHelpers/appError";
+import AppError from "../errorHelpers/AppError";
+// import AppError from "../errorHelpers/appError";
 
 export const golbalErrorHandler=(err:any,req:Request,res:Response,next:NextFunction)=>{
     let statusCode=500
