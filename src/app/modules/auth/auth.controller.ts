@@ -8,9 +8,58 @@ import { setAuthCookie } from "../../utils/setCookie";
 import { JwtPayload } from "jsonwebtoken";
 import { createUserToken } from "../../utils/userToken";
 import { envVars } from "../../config/env";
+import passport from "passport";
 
+
+//email ,password login
+// const credentialsLogin=catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//     const loginInfo = await AuthServices.credentialsLogin(req.body)
+
+//    
+
+//     setAuthCookie(res,loginInfo)
+
+//       sendResponse(res, {
+//         success: true,
+//         statusCode: httpStatus.ACCEPTED,
+//         message: "User login Successfully",
+//         data: loginInfo,
+//     })
+   
+// })
+
+//email ,password login using passport 
 const credentialsLogin=catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const loginInfo = await AuthServices.credentialsLogin(req.body)
+     passport.authenticate("local",async(err: any, user: any, info: any)=>{
+
+    if(err){
+      return next(new AppError(401, err))
+    }
+
+    if(!user){
+       return next(new AppError(401,info.message))
+    }
+
+    const userTokens=  createUserToken(user)
+
+    // delete user.toObject().password
+
+   const { password: pass, ...rest } = user.toObject()
+
+     setAuthCookie(res,userTokens)
+
+      sendResponse(res, {
+        success: true,
+        statusCode: httpStatus.ACCEPTED,
+        message: "User login Successfully",
+        data: {
+          accessToken:user.accessToken,
+          refreshToken:user.refreshToken,
+          user:rest
+        }
+    })
+
+  })(req,res,next)
 
     // res.cookie("accessToken",loginInfo.accessToken,{
     //     httpOnly:true,
@@ -21,14 +70,7 @@ const credentialsLogin=catchAsync(async (req: Request, res: Response, next: Next
     //     secure:false
     // })
 
-    setAuthCookie(res,loginInfo)
-
-      sendResponse(res, {
-        success: true,
-        statusCode: httpStatus.ACCEPTED,
-        message: "User login Successfully",
-        data: loginInfo,
-    })
+   
    
 })
 
