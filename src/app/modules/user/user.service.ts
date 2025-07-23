@@ -11,9 +11,10 @@ import httpStatus from "http-status-codes";
 const createUser=async(payload:Partial<IUser>)=>{
         const {email,password,...rest}=payload
         const isUserExist=await User.findOne({email})
-        if(isUserExist){
-            throw new AppError(StatusCodes.BAD_REQUEST,"User already exists")
-        }
+        
+        // if(isUserExist){
+        //     throw new AppError(StatusCodes.BAD_REQUEST,"User already exists")
+        // }
 
         const hashPassword=await bcryptjs.hash(password as string,Number(envVars.BCRYPT_SALT_ROUND) )
 

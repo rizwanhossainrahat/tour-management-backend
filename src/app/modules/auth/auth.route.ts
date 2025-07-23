@@ -10,6 +10,7 @@ router.post("/login",AuthControlles.credentialsLogin)
 router.post("/refresh-token",AuthControlles.getNewAccessToken)
 router.post("/logout",AuthControlles.logout)
 router.post("/reset-password",checkAuth(...Object.values(Role)),AuthControlles.resetPassword)
+
 router.get("/google", async (req: Request, res: Response, next: NextFunction) => {
     const redirect = req.query.redirect || "/"
     passport.authenticate("google", { scope: ["profile", "email"], state: redirect as string })(req, res, next)
