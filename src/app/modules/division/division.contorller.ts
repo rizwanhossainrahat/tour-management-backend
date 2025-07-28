@@ -17,7 +17,8 @@ const createDivison = catchAsync(async (req: Request, res: Response, next: NextF
     })
 
 const getAllDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const division = await DivisonServices.getAllDivision()
+    const query = req.query;
+    const division = await DivisonServices.getAllDivision(query as Record<string, string>);
 
       sendResponse(res, {
         success: true,
@@ -27,6 +28,18 @@ const getAllDivision = catchAsync(async (req: Request, res: Response, next: Next
     })
 
     })
+
+// const getAllDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//     const division = await DivisonServices.getAllDivision()
+
+//       sendResponse(res, {
+//         success: true,
+//         statusCode: httpStatus.ACCEPTED,
+//         message: "All Division retreived Successfully",
+//         data: division,
+//     })
+
+//     })
 
 const getSingleDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
    const slug=req.params.slug;

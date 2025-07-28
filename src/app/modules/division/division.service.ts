@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { IDivision } from "./division.interface";
 import { Division } from "./division.model";
+import { divisionSearchableFields } from "./division.constant";
+import { QueryBuilder } from "../../utils/queryBuilder";
 
 
 const createDivison=async(payload:IDivision)=>{
@@ -25,16 +27,36 @@ const createDivison=async(payload:IDivision)=>{
         return division
 }
 
-const getAllDivision=async()=>{
-        const division=await Division.find({})
-        const totalDivision=await Division.countDocuments();
+const getAllDivision=async(query: Record<string, string>)=>{
+        const queryBuilder = new QueryBuilder(Division.find(), query)
+
+    const divisionsData = queryBuilder
+        .search(divisionSearchableFields)
+        .filter()
+        .sort()
+        .fields()
+        .paginate()
+
+    const [data, meta] = await Promise.all([
+        divisionsData.build(),
+        queryBuilder.getMeta()
+    ])
         return {
-            data:division,
-            meta:{
-                total:totalDivision
-            }
+            data,
+            meta 
         }
 }
+
+// const getAllDivision=async()=>{
+//         const division=await Division.find({})
+//         const totalDivision=await Division.countDocuments();
+//         return {
+//             data:division,
+//             meta:{
+//                 total:totalDivision
+//             }
+//         }
+// }
 const getSingleDivision=async(slug:string)=>{
         const division=await Division.findOne({slug})
        
