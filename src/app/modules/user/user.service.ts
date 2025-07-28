@@ -6,6 +6,8 @@ import AppError from "../../errorHelpers/AppError";
 import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
 import httpStatus from "http-status-codes";
+import { userSearchableFields } from "./user.constant";
+import { QueryBuilder } from "../../utils/queryBuilder";
 
 
 const createUser=async(payload:Partial<IUser>)=>{
@@ -55,14 +57,26 @@ const updateUser=async(userId:string,payload:Partial<IUser>,decodedToken:JwtPayl
     return newUpdatedUser
 }
 
-const getAllUsers = async () => {
-    const users = await User.find({});
-    const totalUsers = await User.countDocuments();
+const getAllUsers = async (query: Record<string, string>) => {
+    // const users = await User.find({});
+    // const totalUsers = await User.countDocuments();
+
+     const queryBuilder = new QueryBuilder(User.find(), query)
+    const usersData = queryBuilder
+        .filter()
+        .search(userSearchableFields)
+        .sort()
+        .fields()
+        .paginate();
+
+    const [data, meta] = await Promise.all([
+        usersData.build(),
+        queryBuilder.getMeta()
+    ])
+
     return {
-        data: users,
-        meta: {
-            total: totalUsers
-        }
+        data,
+        meta
     }
 }
 
