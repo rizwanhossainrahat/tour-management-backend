@@ -3,12 +3,18 @@ import { AuthControlles } from "./auth.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../user/user.interface";
 import passport from "passport";
+import { envVars } from "../../config/env";
 
 
 const router=Router()
 router.post("/login",AuthControlles.credentialsLogin)
 router.post("/refresh-token",AuthControlles.getNewAccessToken)
 router.post("/logout",AuthControlles.logout)
+
+router.post("/change-password",checkAuth(...Object.values(Role)),AuthControlles.changePassword)
+router.post("/set-password",checkAuth(...Object.values(Role)),AuthControlles.setPassword)
+
+router.post("/forgot-password", AuthControlles.forgotPassword)
 router.post("/reset-password",checkAuth(...Object.values(Role)),AuthControlles.resetPassword)
 
 router.get("/google", async (req: Request, res: Response, next: NextFunction) => {
@@ -17,6 +23,6 @@ router.get("/google", async (req: Request, res: Response, next: NextFunction) =>
 })
 
 // api/v1/auth/google/callback?state=/booking
-router.get("/google/callback", passport.authenticate("google", { failureRedirect: "/login" }), AuthControlles.googleCallbackController)
+router.get("/google/callback", passport.authenticate("google", { failureRedirect: `${envVars.FRONTEND_URL}/login?error=There is some issues with your account. Please contact with out support team!` }), AuthControlles.googleCallbackController)
 
 export const AuthRoutes=router

@@ -1,3 +1,4 @@
+import { deleteImageFromCLoudinary } from "../../config/cloudinary.config";
 import { excludeField } from "../../constant";
 import { QueryBuilder } from "../../utils/queryBuilder";
 import { tourSearchAbleFields } from "./tour.constant";
@@ -7,6 +8,7 @@ import { Tour, TourType } from "./tour.model";
 
 const createTour=async(payload:ITour)=>{
    const existingTour = await Tour.findOne({ title: payload.title });
+   
    
     if(existingTour){
           throw new Error("Tour  already exists.");
@@ -109,7 +111,29 @@ const updateTour=async(id:string,payload:ITour)=>{
     // }
     // payload.slug = slug; 
 
+        if (payload.images && payload.images.length > 0 && existingTour.images && existingTour.images.length > 0) {
+        payload.images = [...payload.images, ...existingTour.images]
+    }
+
+    if (payload.deleteImages && payload.deleteImages.length > 0 && existingTour.images && existingTour.images.length > 0) {
+
+        const restDBImages = existingTour.images.filter(imageUrl => !payload.deleteImages?.includes(imageUrl))
+
+        const updatedPayloadImages = (payload.images || [])
+            .filter(imageUrl => !payload.deleteImages?.includes(imageUrl))
+            .filter(imageUrl => !restDBImages.includes(imageUrl))
+
+        payload.images = [...restDBImages, ...updatedPayloadImages]
+
+
+    }
+
     const updatedTour=await Tour.findByIdAndUpdate(id,payload,{new:true})
+
+    if (payload.deleteImages && payload.deleteImages.length > 0 && existingTour.images && existingTour.images.length > 0) {
+        await Promise.all(payload.deleteImages.map(url => deleteImageFromCLoudinary(url)))
+    }
+
     return updateTour
 }
 

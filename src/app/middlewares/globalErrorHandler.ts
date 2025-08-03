@@ -6,11 +6,22 @@ import { TErrorSources } from "../interfaces/error.types";
 import { handleCastError } from "../helpers/handleCastError";
 import { handlerZodError } from "../helpers/handlerZodError";
 import { handlerValidationError } from "../helpers/handlerValidationError";
+import { deleteImageFromCLoudinary } from "../config/cloudinary.config";
+
 // import AppError from "../errorHelpers/appError";
 
-export const golbalErrorHandler=(err:any,req:Request,res:Response,next:NextFunction)=>{
+export const golbalErrorHandler=async(err:any,req:Request,res:Response,next:NextFunction)=>{
      if (envVars.NODE_ENV === "development") {
         console.log(err);
+    }
+
+    if(req.file){
+        await deleteImageFromCLoudinary(req.file.path)
+    }
+
+    if(req.files && Array.isArray(req.files) && req.files.length>0){
+         const imageUrls=(req.files  as Express.Multer.File[]).map(file=>file.path)
+         await Promise.all(imageUrls.map(url=>deleteImageFromCLoudinary(url)))
     }
 
     let errorSources: TErrorSources[] = []
