@@ -3,9 +3,15 @@ import { NextFunction, Request, Response } from "express";
 import { sendResponse } from "../../utils/sendResponse";
 import httpStatus from "http-status-codes";
 import { DivisonServices } from "./division.service";
+import { IDivision } from "./division.interface";
 
 const createDivison = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const division = await DivisonServices.createDivison(req.body)
+  
+  const payload:IDivision={
+    ...req.body,
+    thumbnail:req.file?.path
+  }
+  const division = await DivisonServices.createDivison(payload)
 
       sendResponse(res, {
         success: true,
@@ -57,8 +63,12 @@ const getSingleDivision = catchAsync(async (req: Request, res: Response, next: N
 
 const updateDivision = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
    const id=req.params.id;
+   const payload:IDivision={
+    ...req.body,
+    thumbnail:req.file?.path
+  }
   
-    const division = await DivisonServices.updateDivision(id,req.body)
+    const division = await DivisonServices.updateDivision(id,payload)
       sendResponse(res, {
         success: true,
         statusCode: httpStatus.ACCEPTED,

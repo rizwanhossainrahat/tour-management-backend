@@ -3,6 +3,7 @@ import { IDivision } from "./division.interface";
 import { Division } from "./division.model";
 import { divisionSearchableFields } from "./division.constant";
 import { QueryBuilder } from "../../utils/queryBuilder";
+import { deleteImageFromCLoudinary } from "../../config/cloudinary.config";
 
 
 const createDivison=async(payload:IDivision)=>{
@@ -90,6 +91,10 @@ const updateDivision=async(id:string,payload:Partial<IDivision>)=>{
     // payload.slug = slug;
 
     const updateDivision=await Division.findByIdAndUpdate(id,payload,{new:true,runValidators:true})
+
+    if(payload.thumbnail && existingDivison.thumbnail){
+        await deleteImageFromCLoudinary(existingDivison.thumbnail)
+    }
 
     return updateDivision;
 }

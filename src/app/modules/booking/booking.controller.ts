@@ -40,14 +40,14 @@ const getSingleBooking = catchAsync(
 
 const getAllBookings = catchAsync(
     async (req: Request, res: Response) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        
         const bookings = await BookingService.getAllBookings();
         sendResponse(res, {
             statusCode: 200,
             success: true,
             message: "Bookings retrieved successfully",
             data: {},
-            // meta: {},
+           
         });
     }
 );
