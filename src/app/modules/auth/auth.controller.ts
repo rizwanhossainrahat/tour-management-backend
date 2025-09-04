@@ -16,7 +16,6 @@ const credentialsLogin=catchAsync(async (req: Request, res: Response, next: Next
     const loginInfo = await AuthServices.credentialsLogin(req.body)
 
    
-
     setAuthCookie(res,loginInfo)
 
       sendResponse(res, {

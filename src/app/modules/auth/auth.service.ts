@@ -16,6 +16,9 @@ const credentialsLogin=async(payload:Partial<IUser>)=>{
     if(!isUserExist){
         throw new AppError(httpStatus.BAD_REQUEST,"Email does not exist")
     }
+    if(!isUserExist.isVerified){
+        throw new AppError(httpStatus.BAD_REQUEST,"User does not verfied")
+    }
     const isPasswordMatch=await bcryptjs.compare(password as string,isUserExist.password as string)
     if(!isPasswordMatch){
         throw new AppError(httpStatus.BAD_REQUEST,"Incorret password")

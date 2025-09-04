@@ -1,7 +1,7 @@
 import { deleteImageFromCLoudinary } from "../../config/cloudinary.config";
 import { excludeField } from "../../constant";
 import { QueryBuilder } from "../../utils/queryBuilder";
-import { tourSearchAbleFields } from "./tour.constant";
+import { tourSearchAbleFields, tourTypeSearchableFields } from "./tour.constant";
 import { ITour, ITourType } from "./tour.interface";
 import { Tour, TourType } from "./tour.model";
 
@@ -153,11 +153,35 @@ const createTourType=async(payload:ITourType)=>{
     return tourType
 }
 
-const getAllTourType=async()=>{
-    const tourType=await TourType.find({})
-   
-    return tourType
+const getAllTourType=async(query:Record<string,string>)=>{
+  
+    const queryBuilder = new QueryBuilder(TourType.find(), query)
+
+    const tourTypes = await queryBuilder
+        .search(tourTypeSearchableFields)
+        .filter()
+        .sort()
+        .fields()
+        .paginate()
+
+    const [data, meta] = await Promise.all([
+        tourTypes.build(),
+        queryBuilder.getMeta()
+    ])
+
+    return {
+        data,
+        meta
+    }
+
 }
+
+// const getAllTourType=async()=>{
+  
+//     const tourType=await TourType.find({})
+   
+//     return tourType
+// }
 
 const updateTourType=async(id:string,payload:ITourType)=>{
     const existingTourType=await TourType.findById(id);

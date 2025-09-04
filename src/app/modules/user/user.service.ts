@@ -49,9 +49,7 @@ const updateUser=async(userId:string,payload:Partial<IUser>,decodedToken:JwtPayl
         }
     }
 
-       if (payload.password) {
-        payload.password = await bcryptjs.hash(payload.password, envVars.BCRYPT_SALT_ROUND)
-    }
+       
      const newUpdatedUser = await User.findByIdAndUpdate(userId, payload, { new: true, runValidators: true })
 
     return newUpdatedUser
