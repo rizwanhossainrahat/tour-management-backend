@@ -82,7 +82,9 @@ const createTourType = catchAsync(async (req: Request, res: Response, next: Next
     })
 
 const getAllTourType = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const tourType=await TourServices.getAllTourType()
+  const query=req.query;
+  const tourType=await TourServices.getAllTourType(query as Record<string,string>)
+  
 
       sendResponse(res, {
         success: true,
@@ -92,6 +94,18 @@ const getAllTourType = catchAsync(async (req: Request, res: Response, next: Next
     })
 
     })
+
+// const getAllTourType = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+//     const tourType=await TourServices.getAllTourType()
+
+//       sendResponse(res, {
+//         success: true,
+//         statusCode: httpStatus.OK,
+//         message: "Tour Type retrived Successfully",
+//         data: tourType,
+//     })
+
+//     })
 
 const updateTourType = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
    const tourTypeId=req.params.id;
@@ -108,6 +122,7 @@ const updateTourType = catchAsync(async (req: Request, res: Response, next: Next
 
 const deleteTourType = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
    const tourTypeId=req.params.id;
+   console.log(tourTypeId)
     const deleteTourtype=await TourServices.deleteTourType(tourTypeId)
 
       sendResponse(res, {
